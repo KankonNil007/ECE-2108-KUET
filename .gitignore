@@ -1,0 +1,18 @@
+# MATLAB temporary and autosave files
+*.asv
+*.m~
+*.slxc
+*.matlab
+slprj/
+
+# Multisim temporary files
+*.bak
+*.tmp
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
