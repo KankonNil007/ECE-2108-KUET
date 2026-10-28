@@ -1,239 +1,38 @@
 <div align="center">
 
-# ⚡ ECE 2108: Design & Simulation of a Passive Two-Port Filter Network
+# 🎓 ECE 2108: Continuous Signals and Linear Systems Sessional
 
 [![KUET](https://img.shields.io/badge/KUET-ECE%202108-red?style=for-the-badge&logo=googlescholar&logoColor=white)](https://www.kuet.ac.bd)
-[![MATLAB](https://img.shields.io/badge/MATLAB-R2016b%2B-blue?style=for-the-badge&logo=mathworks&logoColor=white)](matlab/ECE2108_Passive_Two_Port_Filter.m)
-[![NI Multisim](https://img.shields.io/badge/NI%20Multisim-14.0%2B-orange?style=for-the-badge)](multisim/ECE-2108-Project-01.ms14)
+[![MATLAB](https://img.shields.io/badge/MATLAB-R2016b%2B-blue?style=for-the-badge&logo=mathworks&logoColor=white)](https://www.mathworks.com/products/matlab.html)
+[![NI Multisim](https://img.shields.io/badge/NI%20Multisim-14.0%2B-orange?style=for-the-badge)](https://www.ni.com/multisim)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 [![Security Policy](https://img.shields.io/badge/Security-Policy%20Enforced-brightgreen?style=for-the-badge)](SECURITY.md)
 
 <p align="center">
-  <b>Department of Electronics and Communication Engineering</b><br>
+  <b>Department of Electronics and Communication Engineering (ECE)</b><br>
   <b>Khulna University of Engineering & Technology (KUET)</b><br>
   <i>Author:</i> <b>Kankon Mondal</b>
 </p>
 
 ---
 
-[Overview](#-executive-overview) •
-[Specifications](#-target-specifications--constraints) •
-[Circuit Topologies](#-circuit-topologies--schematics) •
-[Two-Port Formulations](#-two-port-network-formulations) •
-[Results & Benchmarks](#-results--comparative-benchmarking) •
-[Simulation Visualizations](#-simulation-visualizations) •
-[Project Structure](#-repository-structure) •
-[Quickstart](#-quickstart-guide) •
+[Course Overview](#-course-overview) •
+[Repository Structure](#-repository-structure) •
+[Laboratory Modules](#-laboratory-modules) •
+[Class Work](#-class-work-modules) •
+[Featured Course Project](#-featured-course-project) •
+[Quickstart Guide](#-quickstart-guide) •
 [License & Security](#-license--security)
 
 ---
 
 </div>
 
-## 📌 Executive Overview
+## 📌 Course Overview
 
-In real-world biomedical, acoustic, and sensor telemetry systems, transducers frequently capture low-frequency signals contaminated by high-frequency electromagnetic interference (EMI) or power electronics switching noise.
+**ECE 2108: Continuous Signals and Linear Systems Sessional** is a foundational undergraduate laboratory course offered by the Department of Electronics and Communication Engineering at Khulna University of Engineering & Technology (KUET). 
 
-This project delivers a comprehensive investigation, analytical derivation, MATLAB numerical simulation, and NI Multisim 14 SPICE verification for **passive low-pass RC two-port filter networks**. Two distinct configurations were synthesized to preserve a **1 kHz** sensor signal while aggressively suppressing **10 kHz** high-frequency noise under real source and finite load impedances.
-
-### 🌟 Key Highlights & Engineering Conclusions
-* **Rigorous Two-Port Modeling:** Formulated complete closed-form transfer functions, transmission matrices (ABCD parameters), and open-circuit impedance parameters (Z parameters) incorporating source impedance ($R_s = 100\ \Omega$) and load impedance ($R_L = 10\ \text{k}\Omega$).
-* **Cross-Platform Verification:** MATLAB computational predictions were correlated directly against independent hand derivations and NI Multisim 14 SPICE transient/AC sweep simulations ($<0.05\%$ discrepancy).
-* **Load Robustness Finding:** At heavy loading ($R_L = 5\ \text{k}\Omega$), **Design A fails** the passband specification ($G = 0.765 < 0.80$). In contrast, **Design B sustains compliance** ($G = 0.806 \ge 0.80$), establishing Design B as the superior choice for varying load conditions.
-* **Tolerance & Revision Analysis:** Evaluated component tolerance sensitivity ($\pm 5\%$) and proved a $+5\%$ capacitor revision in Design A optimizes stopband rejection ($0.207 \to 0.198$) with negligible passband loss.
-
----
-
-## 🎯 Target Specifications & Constraints
-
-The filter was designed to meet strict passband and stopband criteria simultaneously at the nominal operating point while adhering to practical component count constraints.
-
-| Parameter | Symbol | Specification Limit | Description & Purpose |
-| :--- | :---: | :---: | :--- |
-| **Source Resistance** | $R_s$ | $100\ \Omega$ | Output impedance of the signal transducer |
-| **Nominal Load Resistance** | $R_L$ | $10\ \text{k}\Omega$ | Input impedance of the subsequent amplifier/ADC |
-| **Tested Load Variations** | $R_{L,\text{var}}$ | $5\ \text{k}\Omega,\ 20\ \text{k}\Omega$ | Extreme loading conditions for stability verification |
-| **Input Source Voltage** | $V_s$ | $1.0\ \text{V}_\text{pk}$ | Standardized AC test potential |
-| **Useful Signal Frequency** | $f_1$ | $1.0\ \text{kHz}$ | **Passband:** Minimum Gain $\|V_o / V_s\| \ge \mathbf{0.80}$ (Max loss: $1.938\ \text{dB}$) |
-| **Interference Frequency** | $f_2$ | $10.0\ \text{kHz}$ | **Stopband:** Maximum Gain $\|V_o / V_s\| \le \mathbf{0.25}$ (Min attenuation: $12.04\ \text{dB}$) |
-| **Simulation Frequency Band** | $f$ | $100\ \text{Hz} - 100\ \text{kHz}$ | Logarithmic frequency sweep |
-| **Component Budget** | — | $\le 4\ \text{components}$ | Passive resistors and capacitors only (excluding $R_s, R_L$) |
-
----
-
-## ⚡ Circuit Topologies & Schematics
-
-Two candidate networks were designed, analyzed, and implemented:
-
-### Topology 1: Design A (Single-Stage RC Low-Pass Filter)
-* **Components:** Resistor $R = 1\ \text{k}\Omega$, Capacitor $C = 68\ \text{nF}$ (Total filter component count = 2)
-* **Architecture:** First-order $L$-section network with series resistance and shunt capacitance.
-* **Advantage:** Low cost, minimal board area, straightforward layout.
-
-<p align="center">
-  <img src="figures/schematics/Single_Stage.png" alt="Single Stage RC Filter Schematic" width="620"/>
-  <br>
-  <em>Figure 1: Schematic diagram of Design A (Single-Stage RC Low-Pass Filter with $R_s = 100\ \Omega$ and $R_L = 10\ \text{k}\Omega$).</em>
-</p>
-
----
-
-### Topology 2: Design B (Dual-Stage Cascaded RC Low-Pass Filter)
-* **Components:** $R_1 = 330\ \Omega$, $R_2 = 330\ \Omega$, $C_1 = 68\ \text{nF}$, $C_2 = 68\ \text{nF}$ (Total filter component count = 4)
-* **Architecture:** Second-order cascaded $RC$ ladder network.
-* **Advantage:** Steeper roll-off ($-40\ \text{dB/decade}$ asymptotic slope), enhanced load isolation, superior interference rejection.
-
-<p align="center">
-  <img src="figures/schematics/Dual_Stage.png" alt="Dual Stage RC Filter Schematic" width="680"/>
-  <br>
-  <em>Figure 2: Schematic diagram of Design B (Dual-Stage Cascaded RC Low-Pass Filter with inter-stage interaction).</em>
-</p>
-
----
-
-## 📐 Two-Port Network Formulations
-
-<details>
-<summary><b>▶ Click to expand mathematical derivations (Transfer Functions, ABCD, and Z Parameters)</b></summary>
-
-<br>
-
-### 1. Design A Analytical Transfer Function
-Taking into account source resistance $R_s$ and load resistance $R_L$, the equivalent series impedance is $R_T = R_s + R$. The output voltage across $R_L \parallel \frac{1}{sC}$ yields:
-
-$$H_A(s) = \frac{V_o(s)}{V_s(s)} = \frac{R_L}{(R_s + R + R_L) + s C (R_s + R) R_L}$$
-
-Evaluating along the imaginary axis $s = j\omega = j 2\pi f$:
-
-$$|H_A(j\omega)| = \frac{R_L}{\sqrt{(R_s + R + R_L)^2 + \big[\omega C (R_s + R) R_L\big]^2}}$$
-
-### 2. Design B Exact Nodal Transfer Function
-Due to the inter-stage loading between the first and second $RC$ pairs, nodal admittance equations at Node 1 (junction of $R_1, C_1, R_2$) and Node 2 (output) are formulated as:
-
-$$G_s = \frac{1}{R_s + R_1}, \quad G_2 = \frac{1}{R_2}, \quad Y_\text{out}(s) = \frac{1}{R_L} + s C_2$$
-
-$$H_B(s) = \frac{V_o(s)}{V_s(s)} = \frac{G_s G_2}{(G_s + s C_1 + G_2)(G_2 + Y_\text{out}) - G_2^2}$$
-
-### 3. ABCD Transmission Parameters
-With transmission convention $\begin{bmatrix} V_1 \\ I_1 \end{bmatrix} = \begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} V_2 \\ I_2 \end{bmatrix}$ (where $I_2$ exits port 2, external to $R_s$ and $R_L$):
-
-* **Design A Matrix:**
-  $$\mathbf{T}_A(s) = \begin{bmatrix} 1 + sRC & R \\ sC & 1 \end{bmatrix} = \begin{bmatrix} 1 + s(6.8 \times 10^{-5}) & 1000 \\ s(6.8 \times 10^{-8}) & 1 \end{bmatrix}$$
-
-* **Design B Matrix (Cascade of two L-sections):**
-  $$\mathbf{T}_B(s) = \mathbf{T}_1(s) \times \mathbf{T}_2(s) = \begin{bmatrix} 1 + s(R_1 C_1 + R_1 C_2 + R_2 C_2) + s^2 R_1 R_2 C_1 C_2 & R_1 + R_2 + s R_1 R_2 C_1 \\ s(C_1 + C_2) + s^2 R_2 C_1 C_2 & 1 + s R_2 C_1 \end{bmatrix}$$
-
-### 4. Open-Circuit Impedance Parameters (Z-Parameters, Design A)
-Convention with both port currents entering:
-$$Z_{11}(s) = R + \frac{1}{sC} = 1000 + \frac{1}{s(6.8 \times 10^{-8})}\ \Omega$$
-$$Z_{12}(s) = Z_{21}(s) = Z_{22}(s) = \frac{1}{sC} = \frac{1}{s(6.8 \times 10^{-8})}\ \Omega$$
-
-</details>
-
----
-
-## 📊 Results & Comparative Benchmarking
-
-### 1. Nominal Performance Comparison ($R_L = 10\ \text{k}\Omega$)
-
-| Performance Indicator | Target Criteria | Design A (Single-Stage) | Design B (Dual-Stage) | Multisim Verification | Compliance Status |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **Gain at 1 kHz ($f_1$)** | $\ge \mathbf{0.800}$ | **$0.8296$** ($0.830\ \text{V}$) | **$0.8552$** ($0.855\ \text{V}$) | $0.830\ \text{V}$ | :white_check_mark: **PASS** |
-| **Gain at 10 kHz ($f_2$)** | $\le \mathbf{0.250}$ | **$0.2071$** ($0.207\ \text{V}$) | **$0.1865$** ($0.186\ \text{V}$) | $0.207\ \text{V}$ | :white_check_mark: **PASS** |
-| **10 kHz Noise Suppression** | Min $12.04\ \text{dB}$ | $-13.68\ \text{dB}$ | **$-14.59\ \text{dB}$** | $-13.68\ \text{dB}$ | :white_check_mark: **PASS** |
-| **Component Count** | $\le 4$ | **2 components** | 4 components | — | :white_check_mark: **Within Budget** |
-
-> **Key Observation:** Design B delivers **$+0.0256$ greater passband voltage** at $1\ \text{kHz}$ and **$-0.0206$ stronger interference rejection** at $10\ \text{kHz}$ compared to Design A.
-
----
-
-### 2. Load Robustness Study ($R_L = 5\ \text{k}\Omega,\ 10\ \text{k}\Omega,\ 20\ \text{k}\Omega$)
-
-Load variation represents fluctuations in downstream stage input impedance. The table below presents the quantitative performance under variable load:
-
-| Load Resistance ($R_L$) | Loading Condition | Design A (1 kHz) | Design A (10 kHz) | Design B (1 kHz) | Design B (10 kHz) | Result Summary |
-| :--- | :--- | :---: | :---: | :---: | :---: | :--- |
-| **$5\ \text{k}\Omega$** | Heavy Load | $0.765$ :x: | $0.206$ :white_check_mark: | **$0.806$** :white_check_mark: | **$0.185$** :white_check_mark: | **Design A fails; Design B satisfies all limits** |
-| **$10\ \text{k}\Omega$** | Nominal Load | $0.830$ :white_check_mark: | $0.207$ :white_check_mark: | **$0.855$** :white_check_mark: | **$0.186$** :white_check_mark: | Both designs pass |
-| **$20\ \text{k}\Omega$** | Light Load | $0.865$ :white_check_mark: | $0.207$ :white_check_mark: | **$0.885$** :white_check_mark: | **$0.200$** :white_check_mark: | Both designs pass comfortably |
-
-> [!IMPORTANT]
-> **Load Sensitivity Finding:** When $R_L$ drops to $5\ \text{k}\Omega$, excess voltage division occurs across the series elements. Design A's useful-signal gain drops to **$0.765$** (violating the $0.80$ limit). Design B maintains **$0.806$**, demonstrating that the dual-stage architecture is essential for systems subject to variable loading.
-
----
-
-### 3. Component Tolerance Sensitivity Analysis ($\pm 5\%$)
-
-Standard commercial components feature $\pm 5\%$ manufacturing tolerances. Each component was perturbed independently by $\pm 5\%$ while holding others nominal at $R_L = 10\ \text{k}\Omega$:
-
-| Variation Parameter | Single-Stage (1 kHz) | Single-Stage (10 kHz) | Dual-Stage (1 kHz) | Dual-Stage (10 kHz) | Compliance |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **Nominal Baseline** | $0.830$ | $0.207$ | $0.855$ | $0.186$ | :white_check_mark: PASS |
-| **Resistor $-5\%$** | $0.838$ | $0.216$ | $0.863$ | $0.196$ | :white_check_mark: PASS |
-| **Resistor $+5\%$** | $0.820$ | $0.198$ | $0.847$ | $0.177$ | :white_check_mark: PASS |
-| **Capacitor $-5\%$** | $0.835$ | $0.217$ | $0.854$ | $0.188$ | :white_check_mark: PASS |
-| **Capacitor $+5\%$** | $0.823$ | $0.198$ | $0.840$ | **$0.167$** | :white_check_mark: PASS |
-
-> **Insight:** In all scenarios, tolerances remain strictly compliant. Increasing capacitance yields the most pronounced interference reduction, driving Design B's $10\ \text{kHz}$ gain down to **$0.167$**.
-
----
-
-### 4. Design Revision Study (Single-Stage $C \to +5\%$)
-
-To optimize stopband attenuation without exceeding component count, a trial design revision was executed by increasing Design A capacitance from $68\ \text{nF}$ to $71.4\ \text{nF}$ ($+5\%$):
-
-| Operating Condition | Original ($C = 68\ \text{nF}$) | Revised ($C = 71.4\ \text{nF}$) | Net Delta ($\Delta$) | Engineering Impact |
-| :--- | :---: | :---: | :---: | :--- |
-| **Gain at 1 kHz** | $0.8296$ ($0.830$) | **$0.8242$** | $-0.0054$ | Negligible decrease, remains $>0.80$ |
-| **Gain at 10 kHz** | $0.2071$ ($0.207$) | **$0.1981$** | **$-0.0090$** | **Improved noise rejection by $4.3\%$** |
-
----
-
-## 📈 Simulation Visualizations
-
-### Frequency Response (Bode Magnitude & Phase)
-Logarithmic sweep from $100\ \text{Hz}$ to $100\ \text{kHz}$ showing passband flatness, $-3\ \text{dB}$ cutoffs, and stopband attenuation rates.
-<p align="center">
-  <img src="figures/plots/02_magnitude_phase_response.png" alt="Magnitude and Phase Response" width="850"/>
-</p>
-
-### Load Sensitivity Analysis
-Comparison of useful signal preservation ($1\ \text{kHz}$) and interference transmission ($10\ \text{kHz}$) as load ranges from $5\ \text{k}\Omega$ to $20\ \text{k}\Omega$.
-<p align="center">
-  <img src="figures/plots/03_load_variation.png" alt="Load Variation Analysis" width="850"/>
-</p>
-
-### Component Tolerance Sensitivity
-Sensitivity distribution of gain metrics subject to $\pm 5\%$ variations in resistance and capacitance.
-<p align="center">
-  <img src="figures/plots/04_sensitivity_analysis.png" alt="Component Sensitivity Bar Graph" width="850"/>
-</p>
-
-### Design Revision Verification
-Evaluation of frequency curve shift resulting from increasing Design A capacitance by $+5\%$.
-<p align="center">
-  <img src="figures/plots/05_design_revision.png" alt="Design Revision Response" width="850"/>
-</p>
-
-### Numerical Command Window Execution Log
-Direct MATLAB command execution validating hand derivations, ABCD parameters, and Multisim correlation.
-<p align="center">
-  <img src="figures/plots/01_command_window_output.png" alt="MATLAB Command Window Output" width="750"/>
-</p>
-
----
-
-## ⚖️ Trade-off Decision Matrix
-
-| Evaluation Dimension | Design A (Single-Stage) | Design B (Dual-Stage) | Preferred Selection |
-| :--- | :---: | :---: | :---: |
-| **Passband Transmission ($1\ \text{kHz}$)** | $0.830$ | **$0.855$** | **Design B** (+3.0%) |
-| **Stopband Rejection ($10\ \text{kHz}$)** | $0.207$ | **$0.186$** | **Design B** (+10.1% better) |
-| **Stability Under Heavy Load ($5\ \text{k}\Omega$)** | **Fails ($0.765$)** | **Passes ($0.806$)** | **Design B** |
-| **Roll-off Steepness** | $-20\ \text{dB/dec}$ | **$-40\ \text{dB/dec}$** | **Design B** |
-| **Component Economy & BOM Cost** | **2 Components** | 4 Components | **Design A** |
-| **Circuit Simplicity & Tuning** | **Straightforward** | Inter-stage loading | **Design A** |
-| **Final Recommendation** | *Simplicity priority* | *Performance priority* | **🏆 Design B** |
+This repository serves as a centralized, structured academic archive comprising all laboratory experiments, in-class computational exercises, and the comprehensive final term project. The coursework systematically builds from elementary signal synthesis and discrete-time operations to advanced transform-domain formulations (Fourier, Laplace, and Z-transforms), linear system stability, state-space representations, and two-port passive filter design with SPICE verification.
 
 ---
 
@@ -241,62 +40,191 @@ Direct MATLAB command execution validating hand derivations, ABCD parameters, an
 
 ```text
 ECE-2108-KUET/
-├── docs/                                 # Documentation & comprehensive reports
-│   ├── details.md                        # In-depth analytical breakdown & audit
-│   └── ECE 2108 Lab Project.pdf          # Full 24-page academic lab report
-├── figures/                              # Graphic assets and simulation captures
-│   ├── plots/                            # High-resolution MATLAB analysis figures
-│   │   ├── 01_command_window_output.png  # Terminal printout & ABCD/Z values
-│   │   ├── 02_magnitude_phase_response.png# Frequency sweep (Magnitude & Phase)
-│   │   ├── 03_load_variation.png         # Gain vs Load Resistance (5k to 20k)
-│   │   ├── 04_sensitivity_analysis.png   # +/- 5% tolerance sensitivity bars
-│   │   └── 05_design_revision.png        # +5% capacitance revision comparison
-│   └── schematics/                       # Circuit schematics
-│       ├── Dual_Stage.png                # Two-stage cascaded schematic
-│       └── Single_Stage.png              # Single-stage passive schematic
-├── matlab/                               # Numerical simulation code
-│   └── ECE2108_Passive_Two_Port_Filter.m # Standalone MATLAB script (R2016b+)
-├── multisim/                             # SPICE simulation designs
-│   └── ECE-2108-Project-01.ms14          # NI Multisim 14 circuit schematic
+├── Class_Work/                           # Interactive lecture and practice MATLAB scripts
+│   ├── convint.m                         # Continuous-time numerical convolution function
+│   ├── shift.m                           # Discrete signal shifting utility function
+│   ├── kankon02.m – kankon09.m           # Practice scripts (FFT, linearity, state-space)
+│   └── README.md                         # Class work index & documentation
+├── Labs/                                 # Laboratory experiments (01 – 05)
+│   ├── LAB - 01/                         # Elementary signal generation & visualization
+│   │   ├── figures/                      # Waveform output captures (.png)
+│   │   ├── LAB0101.m – LAB0103.m         # Impulse, step, and ramp scripts
+│   │   └── README.md                     # Lab 01 report with embedded plots
+│   ├── LAB - 02/                         # Operations on signals & mathematical foundations
+│   │   ├── figures/                      # Waveform and matrix output captures
+│   │   ├── *.m                           # Even/odd, shifting, Ax=b, statistics
+│   │   └── README.md                     # Lab 02 report with embedded plots
+│   ├── LAB - 03/                         # Frequency analysis of signals
+│   │   ├── figures/                      # Harmonic and magnitude spectrum plots
+│   │   ├── Fourier_*.m                   # Fourier series & FFT scripts
+│   │   └── README.md                     # Lab 03 report with embedded plots
+│   ├── LAB - 04/                         # System properties & transform domain analysis
+│   │   ├── figures/                      # Linearity, time-invariance & Z-plane plots
+│   │   ├── LAB0401.m – LAB0403.m         # Linearity, Laplace/Z-transform, stability
+│   │   └── README.md                     # Lab 04 report with embedded plots
+│   ├── LAB - 05/                         # State-space modeling & dynamic control analysis
+│   │   ├── figures/                      # Continuous/discrete step & Bode plots
+│   │   ├── LAB0501.m, LAB0502.m          # Continuous and discrete state-space models
+│   │   └── README.md                     # Lab 05 report with embedded plots
+│   └── README.md                         # Laboratory syllabus and index
+├── Project/                              # Final Term Project: Passive Two-Port Filter Network
+│   ├── docs/                             # Academic project documentation & reports
+│   │   └── ECE 2108 Lab Project.pdf      # Full 24-page academic lab report
+│   ├── figures/                          # Schematics and high-resolution MATLAB analysis plots
+│   │   ├── plots/                        # Frequency sweep, load variation, sensitivity
+│   │   └── schematics/                   # Single-stage & dual-stage circuit schematics
+│   ├── matlab/                           # Standalone MATLAB numerical simulation
+│   │   └── ECE2108_Passive_Two_Port_Filter.m
+│   ├── multisim/                         # NI Multisim 14 SPICE circuit schematic
+│   │   └── ECE-2108-Project-01.ms14
+│   └── README.md                         # Detailed project report & mathematical derivations
 ├── .gitignore                            # Temp and autosave file exclusions
 ├── LICENSE                               # Permissive MIT License
-├── README.md                             # Repository showcase & documentation
+├── README.md                             # Repository homepage & curriculum documentation
 └── SECURITY.md                           # Security guidelines & reporting policy
 ```
 
 ---
 
+## 🔬 Laboratory Modules
+
+### [LAB - 01: Elementary Continuous & Discrete Time Signal Generation](Labs/LAB%20-%2001/)
+Explores mathematical formulation, parameterization, and graphical visualization of standard test signals in both continuous ($t$) and discrete ($n$) time domains.
+* **Unit Impulse Signal ($\delta(t), \delta[n]$):** Synthesized in continuous and discrete domains [`LAB0101.m`](Labs/LAB%20-%2001/LAB0101.m).
+* **Unit Step Signal ($u(t), u[n]$):** Generation and amplitude normalization [`LAB0102.m`](Labs/LAB%20-%2001/LAB0102.m).
+* **Unit Ramp Signal ($r(t), r[n]$):** Generation and bounded interval verification [`LAB0103.m`](Labs/LAB%20-%2001/LAB0103.m).
+* **Output Plots:** Documented in [`Labs/LAB - 01/figures/`](Labs/LAB%20-%2001/figures/). See full report in [LAB - 01 README](Labs/LAB%20-%2001/README.md).
+
+---
+
+### [LAB - 02: Operations on Signals, Linear Algebra & Statistical Analysis](Labs/LAB%20-%2002/)
+Investigates fundamental signal operations, linear algebraic methods, and statistical descriptors.
+* **Even & Odd Decomposition:** Splits arbitrary signals $x(t)$ into symmetric $x_e(t) = \frac{x(t)+x(-t)}{2}$ and anti-symmetric $x_o(t) = \frac{x(t)-x(-t)}{2}$ components via [`components.m`](Labs/LAB%20-%2002/components.m) and [`even_odd.m`](Labs/LAB%20-%2002/even_odd.m).
+* **Time Shifting Operations:** Forward and backward translation of sequence indices with edge handling via [`shiftSignal.m`](Labs/LAB%20-%2002/shiftSignal.m) and [`SignalShifting.m`](Labs/LAB%20-%2002/SignalShifting.m).
+* **Linear Equation Solvers:** Solves systems of linear algebraic equations $A \mathbf{x} = \mathbf{b}$ via matrix inversion in [`Solution_of_LE.m`](Labs/LAB%20-%2002/Solution_of_LE.m).
+* **Statistical Signal Metrics:** Computes minimum, maximum, sample mean, variance ($\sigma^2$), standard deviation ($\sigma$), and Root Mean Square (RMS) in [`stat_functions.m`](Labs/LAB%20-%2002/stat_functions.m).
+* **Output Plots:** Documented in [`Labs/LAB - 02/figures/`](Labs/LAB%20-%2002/figures/). See full report in [LAB - 02 README](Labs/LAB%20-%2002/README.md).
+
+---
+
+### [LAB - 03: Frequency Analysis of Signals](Labs/LAB%20-%2003/)
+Focuses on harmonic expansion and spectral domain decomposition.
+* **Fourier Series Approximation:** Synthesizes periodic waveforms from truncated Fourier series expansions for selectable harmonic counts ($M$) in [`Fourier_Representation.m`](Labs/LAB%20-%2003/Fourier_Representation.m).
+* **Fourier Transform & FFT Spectrum:** Computes Fast Fourier Transform ($\text{FFT}$) of continuous/discrete exponentially decaying signals $x(t) = e^{-0.5|t|}$ and plots two-sided magnitude spectra via [`Fourier_Transform.m`](Labs/LAB%20-%2003/Fourier_Transform.m).
+* **Output Plots:** Documented in [`Labs/LAB - 03/figures/`](Labs/LAB%20-%2003/figures/). See full report in [LAB - 03 README](Labs/LAB%20-%2003/README.md).
+
+---
+
+### [LAB - 04: System Properties, Transform Domain & Stability Analysis](Labs/LAB%20-%2004/)
+Analyzes core system characterizations, symbolic transform techniques, and Z-plane stability.
+* **Linearity & Time-Invariance (LTI) Verification:** Empirically tests systems against superposition ($H[a x_1 + b x_2] = a H[x_1] + b H[x_2]$) and time-shift equivalence in [`LAB0401.m`](Labs/LAB%20-%2004/LAB0401.m).
+* **Symbolic Laplace & Z-Transforms:** Uses symbolic computation to find Laplace transforms ($\mathcal{L}\{f(t)\}$), inverse Laplace transforms ($\mathcal{L}^{-1}\{F(s)\}$), forward Z-transforms ($\mathcal{Z}\{x[n]\}$), and inverse Z-transforms ($\mathcal{Z}^{-1}\{X(z)\}$) in [`LAB0402.m`](Labs/LAB%20-%2004/LAB0402.m).
+* **Pole-Zero Constellation & Stability:** Solves discrete transfer functions $F(z)$, calculates pole-zero coordinates via `tf2zpk`, plots constellations on the Z-plane (`zplane`), and validates BIBO stability condition ($|p_i| < 1$) in [`LAB0403.m`](Labs/LAB%20-%2004/LAB0403.m).
+* **Output Plots:** Documented in [`Labs/LAB - 04/figures/`](Labs/LAB%20-%2004/figures/). See full report in [LAB - 04 README](Labs/LAB%20-%2004/README.md).
+
+---
+
+### [LAB - 05: State-Space Modeling, Controllability, Observability & Bode Analysis](Labs/LAB%20-%2005/)
+Covers dynamic system representation in state-space form, control metrics, and frequency-domain stability analysis.
+* **Continuous RLC State-Space Model:** Constructs $(A, B, C, D)$ matrices for an $RLC$ circuit, performs asymptotic stability testing, calculates controllability matrix rank (`ctrb`), observability matrix rank (`obsv`), step response, and Bode plots (magnitude & phase) in [`LAB0501.m`](Labs/LAB%20-%2005/LAB0501.m).
+* **Discrete State-Space Model:** Discretizes the continuous system using zero-order hold sampling (`c2d`), tests discrete controllability, observability, and discrete step/frequency responses in [`LAB0502.m`](Labs/LAB%20-%2005/LAB0502.m).
+* **Output Plots:** Documented in [`Labs/LAB - 05/figures/`](Labs/LAB%20-%2005/figures/). See full report in [LAB - 05 README](Labs/LAB%20-%2005/README.md).
+
+---
+
+## 💻 Class Work Modules
+
+The [`Class_Work/`](Class_Work/) directory contains supplementary scripts and in-class problem implementations:
+* **[`convint.m`](Class_Work/convint.m):** Numerical integration script for computing continuous-time convolution $y(t) = x(t) * h(t)$.
+* **[`shift.m`](Class_Work/shift.m):** Signal index transformation and zero-padding helper utility.
+* **[`kankon02.m`](Class_Work/kankon02.m) – [`kankon09.m`](Class_Work/kankon09.m):** Progressive implementations covering FFT spectral analysis, convolution verification, impulse response analysis, symbolic transforms, and state-space systems.
+* **Documentation:** Detailed script index and explanations available in [`Class_Work/README.md`](Class_Work/README.md).
+
+---
+
+## ⚡ Featured Course Project
+
+<div align="center">
+
+### [Design & Simulation of a Passive Two-Port Filter Network](Project/)
+
+[![Project Details](https://img.shields.io/badge/Project-Documentation%20%26%20Derivations-blue?style=for-the-badge)](Project/README.md)
+[![Project Report](https://img.shields.io/badge/PDF%20Report-24%20Pages-red?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](Project/docs/ECE%202108%20Lab%20Project.pdf)
+[![MATLAB Simulation](https://img.shields.io/badge/MATLAB-Simulation%20Script-brightgreen?style=for-the-badge&logo=mathworks&logoColor=white)](Project/matlab/ECE2108_Passive_Two_Port_Filter.m)
+[![Multisim Schematic](https://img.shields.io/badge/Multisim-SPICE%20Design-orange?style=for-the-badge)](Project/multisim/ECE-2108-Project-01.ms14)
+
+</div>
+
+### Project Overview
+The capstone project for ECE 2108 focuses on designing, mathematically deriving, and verifying a passive low-pass RC two-port filter network to isolate a **$1\ \text{kHz}$** transducer signal from **$10\ \text{kHz}$** electromagnetic interference (EMI) under realistic non-ideal source ($R_s = 100\ \Omega$) and load ($R_L = 10\ \text{k}\Omega$) constraints.
+
+| Target Specification | Limit | Achieved (Design A) | Achieved (Design B) |
+| :--- | :---: | :---: | :---: |
+| **Passband Gain ($f_1 = 1\ \text{kHz}$)** | $\ge 0.80$ | **$0.893$** ($-0.98\ \text{dB}$) | **$0.865$** ($-1.26\ \text{dB}$) |
+| **Stopband Gain ($f_2 = 10\ \text{kHz}$)** | $\le 0.25$ | **$0.207$** ($-13.68\ \text{dB}$) | **$0.076$** ($-22.39\ \text{dB}$) |
+| **Component Budget** | $\le 4$ passive | 2 components ($1\ \text{k}\Omega, 68\ \text{nF}$) | 4 components ($2 \times 330\ \Omega, 2 \times 68\ \text{nF}$) |
+| **Heavy Load Compliance ($R_L = 5\ \text{k}\Omega$)** | $\ge 0.80$ | ❌ $0.765$ (Fails) |  **$0.806$** (Passes) |
+
+### Key Conclusions
+1. **Design A (Single-Stage $RC$):** Optimal for low component count, board area, and cost; however, it fails passband compliance under heavy load ($R_L = 5\ \text{k}\Omega$).
+2. **Design B (Dual-Stage Cascaded $RC$):** Demonstrates superior stopband rejection ($22.39\ \text{dB}$ attenuation) and maintains passband compliance under heavy loading, proving superior robustness.
+3. **Cross-Platform Accuracy:** Exact analytical derivation, MATLAB numerical computation, and NI Multisim 14 SPICE simulations correlated within $<0.05\%$ discrepancy.
+
+> 📖 **Full Project Documentation:** For detailed analytical derivations, ABCD & Z parameters, sensitivity graphs, and Multisim schematics, please visit the [**Project README**](Project/README.md).
+
+---
+
+## 🛠️ Software & Environment
+
+| Environment / Tool | Version | Purpose |
+| :--- | :--- | :--- |
+| **MATLAB** | R2016b – R2024b+ | Computational algorithms, symbolic algebra, matrix calculations, and plotting |
+| **NI Multisim** | 14.0+ | Schematic capture, AC sweep, and transient SPICE circuit simulation |
+| **Operating System** | Windows / Linux / macOS | Platform independent execution |
+
+---
+
 ## 🚀 Quickstart Guide
 
-### Running the MATLAB Simulation
-The script is self-contained and uses standard base MATLAB functions:
+### 1. Clone the Repository
+```bash
+git clone https://github.com/KankonNil007/ECE-2108-KUET.git
+cd ECE-2108-KUET
+```
 
-1. Open MATLAB (R2016b or newer).
-2. Set the current directory to `matlab/` or add it to your path:
+### 2. Running Lab Scripts in MATLAB
+1. Open MATLAB.
+2. Navigate to the desired laboratory folder:
    ```matlab
-   cd('matlab');
+   cd('Labs/LAB - 04');
    ```
-3. Execute the simulation:
+3. Execute any script directly:
    ```matlab
-   ECE2108_Passive_Two_Port_Filter
+   LAB0403
    ```
-4. All 4 figure windows will render automatically, and analytical parameters (ABCD and Z-matrices) will display in the Command Window.
 
-### Running the Multisim Simulation
-1. Launch **NI Multisim 14.0** or later.
-2. Open `multisim/ECE-2108-Project-01.ms14`.
-3. Select **Simulate > Analyses > AC Analysis** or **Interactive Simulation**.
-4. Observe the probe voltages at $1\ \text{kHz}$ and $10\ \text{kHz}$ across $R_L$.
+### 3. Running the Project Simulation
+* **MATLAB Simulation:**
+  ```matlab
+  cd('Project/matlab');
+  ECE2108_Passive_Two_Port_Filter
+  ```
+  *Generates all 4 comparative plots (Bode response, load sensitivity, tolerance variation, and terminal parameters).*
+* **NI Multisim Simulation:**
+  1. Open NI Multisim 14.0+.
+  2. Load [`Project/multisim/ECE-2108-Project-01.ms14`](Project/multisim/ECE-2108-Project-01.ms14).
+  3. Run **AC Analysis** or **Interactive Simulation**.
 
 ---
 
 ## 🔒 License & Security
 
-* **License:** This project is licensed under the terms of the [MIT License](LICENSE). You are free to use, modify, and distribute this work for academic and educational purposes.
-* **Security Policy:** We adhere to safe open-source software practices. For information on reporting vulnerabilities and safe simulation execution guidelines, please consult [SECURITY.md](SECURITY.md).
+* **License:** This repository is open source under the terms of the [MIT License](LICENSE).
+* **Security Policy:** All simulation files adhere to safe academic execution standards. For vulnerability reporting, see [SECURITY.md](SECURITY.md).
 
 ---
 
 <div align="center">
-  <sub>Developed for ECE 2108 · Department of Electronics and Communication Engineering · Khulna University of Engineering & Technology (KUET)</sub>
+  <sub>Department of Electronics and Communication Engineering · Khulna University of Engineering & Technology (KUET)</sub><br>
+  <sub>Maintained by <b>Kankon Mondal</b></sub>
 </div>
